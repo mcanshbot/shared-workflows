@@ -1,0 +1,35 @@
+name: ⬣ Lint
+
+on:
+  workflow_call:
+    inputs:
+      package-manager:
+        required: true
+        type: string
+      package-manager-version:
+        required: true
+        type: number
+      node-version:
+        required: true
+        type: number
+
+jobs:
+  lint:
+    name: ⬣ Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: ./_install.yml
+        with:
+          package-manager: ${{ inputs.package-manager }}
+          package-manager-version: ${{ inputs.package-manager-version }}
+          node-version: ${{ inputs.node-version }}
+
+      - name: 🔬 Lint
+        run: npm run lint

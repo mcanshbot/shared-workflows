@@ -1,0 +1,43 @@
+name: 👔 Format
+
+on:
+  workflow_call:
+    inputs:
+      package-manager:
+        required: true
+        type: string
+
+jobs:
+  format:
+    name: 👔 Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: ./_install.yml
+        with:
+          package-manager: ${{ inputs.package-manager }}
+          package-manager-version: ${{ inputs.package-manager-version }}
+          node-version: ${{ inputs.node-version }}
+
+      - name: 👔 Format
+        run: npm run format
+
+      - name: 💪 Commit
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          git add .
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "💿 no formatting changed"
+            exit 0
+          fi
+          git commit -m "chore: format"
+          git push
+          echo "💿 pushed formatting changes https://github.com/$GITHUB_REPOSITORY/commit/$(git rev-parse HEAD)"
