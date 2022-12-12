@@ -9,7 +9,6 @@ permissions:
 
 jobs:
   stale:
-    if: github.repository == 'remix-run/react-router-website'
     runs-on: ubuntu-latest
     steps:
       - name: 🥺 Handle Ghosting
