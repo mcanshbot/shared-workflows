@@ -15,48 +15,48 @@ on:
 
 jobs:
   setup-node:
-  name: ⎔ Setup node
-  runs-on: ubuntu-latest
-  steps:
-    - name: ⎔ Setup node
-      if: ${{ inputs.package-manager }} == "npm" || ${{ inputs.package-manager }} == "yarn"
-      uses: actions/setup-node@v3
-      with:
-        cache: ${{ inputs.package-manager }}
-        node-version: ${{ inputs.node-version }}
+    name: ⎔ Setup node
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⎔ Setup node
+        if: ${{ inputs.package-manager }} == "npm" || ${{ inputs.package-manager }} == "yarn"
+        uses: actions/setup-node@v3
+        with:
+          cache: ${{ inputs.package-manager }}
+          node-version: ${{ inputs.node-version }}
 
-    - name: 🟧 Install pnpm
-      if: ${{ inputs.package-manager }} == "pnpm"
-      id: pnpm-install
-      uses: pnpm/action-setup@v2
-      with:
-        version: ${{ inputs.package-manager-version }}
-        run_install: false
-      
-    - name: 🟧 Get pnpm store directory
-      if: ${{ inputs.package-manager }} == "pnpm"
-      id: pnpm-cache
-      shell: bash
-      run: |
-        echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      - name: 🟧 Install pnpm
+        if: ${{ inputs.package-manager }} == "pnpm"
+        id: pnpm-install
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ inputs.package-manager-version }}
+          run_install: false
+        
+      - name: 🟧 Get pnpm store directory
+        if: ${{ inputs.package-manager }} == "pnpm"
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
-    - name: 🟧 Setup pnpm cache
-      if: ${{ inputs.package-manager }} == "pnpm"
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
+      - name: 🟧 Setup pnpm cache
+        if: ${{ inputs.package-manager }} == "pnpm"
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
-    - name: 📥 Install deps
-      run: npm ci
-      if: ${{ inputs.package-manager }} == "npm"
+      - name: 📥 Install deps
+        run: npm ci
+        if: ${{ inputs.package-manager }} == "npm"
 
-    - name: 📥 Install deps
-      run: yarn install --frozen-lockfile
-      if: ${{ inputs.package-manager }} == "yarn"
+      - name: 📥 Install deps
+        run: yarn install --frozen-lockfile
+        if: ${{ inputs.package-manager }} == "yarn"
 
-    - name: 📥 Install deps
-      run: pnpm install --frozen-lockfile
-      if: ${{ inputs.package-manager }} == "pnpm"
+      - name: 📥 Install deps
+        run: pnpm install --frozen-lockfile
+        if: ${{ inputs.package-manager }} == "pnpm"
